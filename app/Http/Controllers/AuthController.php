@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\SignUpRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -9,19 +10,16 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    public function signup(Request $request)
+    public function signup(SignUpRequest $request)
     {
-        $request->validate([
-            'name' => ['required', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)],
-            'password' => ['required','min:4', ],
-        ]);
+        
+       $validateRequest = $request->validate();
         
         $user = User::create([
-            'name' => $request["name"],
-            'email' => $request["email"],
-            'password' => bcrypt($request["name"]),
-            'picture' => env('AVATAR_GENERATOR_URL') . $request["name"],
+            'name' => $validateRequest["name"],
+            'email' => $validateRequest["email"],
+            'password' => bcrypt($validateRequest["password"]),
+            'picture' => env('AVATAR_GENERATOR_URL') . $validateRequest["name"],
         ]);
 
         $token =  auth()->login($user);
