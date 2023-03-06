@@ -15,8 +15,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// MIDDLEWARE AUTH
+Route::middleware('auth:api')->group(function() {
+    Route::post('/sign-out',  [AuthController::class, 'signout']);
+    Route::post('/refresh-token',  [AuthController::class, 'refreshToken']);
+});
+
+// MIDDLEWARE JWT REFRESH
+Route::middleware('jwt.refresh')->group(function() {
+    Route::post('/refresh-token',  [AuthController::class, 'refreshToken']);
 });
 
 // SIGNUP / REGISTER

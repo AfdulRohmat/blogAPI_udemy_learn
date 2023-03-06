@@ -52,7 +52,7 @@ class AuthController extends Controller
                 'access_token' => [
                     'token' => $token,
                     'type' => 'Bearer',
-                    'epires_in' => JWTAuth::factory()->getTTL() * 24,
+                    'epires_in' => JWTAuth::factory()->getTTL(),
                 ]
             ],
         ], 200);
@@ -91,7 +91,49 @@ class AuthController extends Controller
                 'access_token' => [
                     'token' => $token,
                     'type' => 'Bearer',
-                    'epires_in' => JWTAuth::factory()->getTTL() * 24,
+                    'epires_in' => JWTAuth::factory()->getTTL(),
+                ]
+            ],
+        ], 200);
+    }
+
+    // SIGN OUT
+    public function signout()
+    {
+        auth()->logout();
+
+        return response()->json([
+            'meta' => [
+                'code' => 200,
+                'status' => 'success',
+                'message' => 'Succesfully Logout'
+            ], // kode
+            'data' => [],
+        ], 200);
+    }
+
+    // REFRESH TOKEN
+    public function refreshToken()
+    {
+        $user =auth()->user();
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json([
+            'meta' => [
+                'code' => 200,
+                'status' => 'success',
+                'message' => 'Token refeshed succesfully'
+            ], // kode
+            'data' => [
+                'user' => [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'picture' => $user->picture,
+                ],
+                'access_token' => [
+                    'token' => $token,
+                    'type' => 'Bearer',
+                    'epires_in' => JWTAuth::factory()->getTTL(),
                 ]
             ],
         ], 200);
